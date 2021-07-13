@@ -44,6 +44,7 @@ if __name__ == '__main__':
 
 ```python
 from async_cast import also_sync, thread_pool
+import asyncio
 
 @also_sync
 async def request_url(url, **kwargs):
@@ -54,11 +55,11 @@ async def request_url(url, **kwargs):
 
 async def main():
     with thread_pool(3):
-      t1 = request_url.async_thread('https://github.com')
-      t2 = request_url.async_thread('https://google.com')
-      t3 = request_url.async_thread('https://facebook.com')
-      resutls = await asyncio.gather(t1,t2,t3)
-      print(results)
+        t1 = request_url.async_thread('https://github.com')
+        t2 = request_url.async_thread('https://google.com')
+        t3 = request_url.async_thread('https://facebook.com')
+        results = await asyncio.gather(t1,t2,t3)
+        print(results)
 
 if __name__ == '__main__':
     asyncio.run(main())
@@ -67,7 +68,8 @@ if __name__ == '__main__':
 ## Running sync/blocking function in threadpool
 
 ```python
-from async_cast import also_sync, thread_pool
+from async_cast import also_async, thread_pool
+import asyncio
 
 @also_async
 def request_url(url, **kwargs):
@@ -78,11 +80,11 @@ def request_url(url, **kwargs):
 
 async def main():
     with thread_pool(3):
-      t1 = request_url.async_thread('https://github.com')
-      t2 = request_url.async_thread('https://google.com')
-      t3 = request_url.async_thread('https://facebook.com')
-      resutls = await asyncio.gather(t1,t2,t3)
-      print(results)
+        t1 = request_url.async_thread('https://github.com')
+        t2 = request_url.async_thread('https://google.com')
+        t3 = request_url.async_thread('https://facebook.com')
+        results = await asyncio.gather(t1,t2,t3)
+        print(results)
 
 if __name__ == '__main__':
     asyncio.run(main())
