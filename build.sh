@@ -4,7 +4,7 @@ if ! pandoc --from=markdown --to=rst --output=README README.md ; then
     cp README.md README
 fi
 
-app="smart_alarm"
+app="async_cast"
 
 if ls dist/$app\-*.tar.gz > /dev/null ; then
     rm dist/$app\-*.tar.gz
