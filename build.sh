@@ -16,3 +16,7 @@ fi
 
 python3 setup.py sdist && twine check dist/$app\-*.tar.gz
 exit $?
+
+pkg=`ls dist/$app\-*.tar.gz`
+echo
+echo "upload with: twine upload $pkg"
