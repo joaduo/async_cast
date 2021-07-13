@@ -1,5 +1,5 @@
 """
-asyncio_threads
+async_cast
 Copyright (c) 2021, Joaquin G. Duo
 
 Code Licensed under MIT License. See LICENSE file.
