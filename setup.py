@@ -20,8 +20,8 @@ def long_description():
 setup(
   name = name,
   py_modules=[name],
-  version = '0.2',
-  description = 'Cast Sync/Async functions to Async/Sync or Threads',
+  version = '0.3',
+  description = 'Cast Async/Blocking functions to Blocking/Async. Also use threads if needed.',
   long_description=long_description(),
   long_description_content_type='text/x-rst',
   author = 'Joaquin Duo',
