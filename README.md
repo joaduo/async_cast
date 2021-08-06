@@ -15,6 +15,13 @@ So with this small self-contained library you can easily convert legacy code int
 The best way is running several blocking function in different threads. But **be aware** that threads
 also bring race conditions, so make sure concurrent functions are thread-safe.
 
+## Installing
+
+```
+pip install -U async-cast
+```
+
+The package is a single module that you can easily audit. 
 
 ## Casting `async` function to a blocking function
 
