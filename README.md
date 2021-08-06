@@ -1,4 +1,7 @@
 # async_cast
+
+[![Codeship Status for joaduo/async_cast](https://app.codeship.com/projects/30c11a6e-2132-4298-8dbb-2b01e8cf3bac/status?branch=master)](https://app.codeship.com/projects/450075)
+
 Cast async function sync (blocking) and viceversa. Also run in threads sync and async functions.
 
 
