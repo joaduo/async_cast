@@ -32,7 +32,7 @@ from async_cast import also_blocking
 
 @also_blocking
 async def request_url(url, **kwargs):
-    print(f'Requestion {url} with options {kwargs}')
+    print(f'Requesting {url} with options {kwargs}')
     ...
     result = f'<h1>{url}</h1>'
     return result
@@ -49,7 +49,7 @@ import asyncio
 
 @also_async
 def request_url(url, **kwargs):
-    print(f'Requestion {url} with options {kwargs}')
+    print(f'Requesting {url} with options {kwargs}')
     ...
     result = f'<h1>{url}</h1>'
     return result
@@ -74,7 +74,7 @@ import asyncio
 
 @also_blocking
 async def request_url(url, **kwargs):
-    print(f'Requestion {url} with options {kwargs}')
+    print(f''Requesting {url} with options {kwargs}')
     ...
     result = f'<h1>{url}</h1>'
     return result
@@ -99,7 +99,7 @@ import asyncio
 
 @also_async
 def request_url(url, **kwargs):
-    print(f'Requestion {url} with options {kwargs}')
+    print(f'Requesting {url} with options {kwargs}')
     ...
     result = f'<h1>{url}</h1>'
     return result
