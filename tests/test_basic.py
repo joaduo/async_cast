@@ -31,7 +31,7 @@ async def main_async():
         await asyncio.gather(t, t3, t4, t5, t6)
 
 
-def test():
+def test_async_cast():
     # Run synchronic
     async_func.sync(1)
     sync_func(1)
@@ -39,4 +39,4 @@ def test():
 
 
 if __name__ == '__main__':
-    test()
+    test_async_cast()
