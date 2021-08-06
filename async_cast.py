@@ -11,7 +11,7 @@ import inspect
 
 def thread_pool(max_workers=None, *args, **kwargs):
     """
-    Create a ThreadPoolExecutor pool to run functions decorated with `@also_async` and `@also_sync`
+    Create a ThreadPoolExecutor pool to run functions decorated with `@also_async` and `@also_blocking`
 
     Accepts same arguments as `concurrent.futures.ThreadPoolExecutor`
     Args:
@@ -65,7 +65,7 @@ class _DecoratorBase:
     def async_thread(self, *args, **kwargs):
         fn = self._wrapped_func
         if inspect.iscoroutinefunction(fn):
-            fn = self.sync
+            fn = self.blocking
         loop = asyncio.get_running_loop()
         # run_in_executor only allows *args (positional), so we use self._run_fn
         return loop.run_in_executor(self._get_pool(),
@@ -77,20 +77,20 @@ class _DecoratorBase:
 
 class also_async(_DecoratorBase):
     """
-    Cast sync function to async
+    Cast blocking function to async
     """
-    def sync(self, *args, **kwargs):
+    def blocking(self, *args, **kwargs):
         return self._wrapped_func(*args, **kwargs)
 
     async def async_(self, *args, **kwargs):
         return self._wrapped_func(*args, **kwargs)
 
 
-class also_sync(_DecoratorBase):
+class also_blocking(_DecoratorBase):
     """
-    Cast async function to sync
+    Cast async function to blocking
     """
-    def sync(self, *args, **kwargs):
+    def blocking(self, *args, **kwargs):
         return asyncio.run(self(*args, **kwargs))
 
     def async_(self, *args, **kwargs):

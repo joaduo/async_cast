@@ -2,15 +2,16 @@
 
 [![Codeship Status for joaduo/async_cast](https://app.codeship.com/projects/30c11a6e-2132-4298-8dbb-2b01e8cf3bac/status?branch=main)](https://app.codeship.com/projects/450075)
 
-Cast async function sync (blocking) and viceversa. Also run in threads sync and async functions.
+Cast async function to blocking and viceversa.
+Also run in functions async and blocking functions in threads.
 
 
 ## Casting `async` function to a sync/blocking function
 
 ```python
-from async_cast import also_sync
+from async_cast import also_blocking
 
-@also_sync
+@also_blocking
 async def request_url(url, **kwargs):
     print(f'Requestion {url} with options {kwargs}')
     ...
@@ -23,7 +24,7 @@ if __name__ == '__main__':
 
 ## Casting a sync/blocking function to `async` function
 
-from async_cast import also_sync, also_async, thread_pool
+from async_cast import also_blocking, also_async, thread_pool
 
 ```python
 from async_cast import also_async
@@ -46,10 +47,10 @@ if __name__ == '__main__':
 ## Running `async` function in threadpool
 
 ```python
-from async_cast import also_sync, thread_pool
+from async_cast import also_blocking, thread_pool
 import asyncio
 
-@also_sync
+@also_blocking
 async def request_url(url, **kwargs):
     print(f'Requestion {url} with options {kwargs}')
     ...
