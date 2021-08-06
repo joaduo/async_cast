@@ -4,10 +4,8 @@ Copyright (c) 2021, Joaquin G. Duo
 
 Code Licensed under MIT License. See LICENSE file.
 """
-from setuptools import setup, find_packages
+from setuptools import setup
 import six
-import os
-
 
 name = 'async_cast'
 
@@ -21,8 +19,8 @@ def long_description():
 
 setup(
   name = name,
-  packages = find_packages(),
-  version = '0.1',
+  py_modules=[name],
+  version = '0.2',
   description = 'Cast Sync/Async functions to Async/Sync or Threads',
   long_description=long_description(),
   long_description_content_type='text/x-rst',
