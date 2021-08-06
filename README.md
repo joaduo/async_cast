@@ -17,6 +17,8 @@ also bring race conditions, so make sure concurrent functions are thread-safe.
 
 ## Installing
 
+https://pypi.org/project/async-cast/
+
 ```
 pip install -U async-cast
 ```
@@ -36,12 +38,10 @@ async def request_url(url, **kwargs):
     return result
 
 if __name__ == '__main__':
-    print(request_url.sync('https://github.com'))
+    print(request_url.blocking('https://github.com'))
 ```
 
 ## Casting a blocking function to `async` function
-
-from async_cast import also_blocking, also_async, thread_pool
 
 ```python
 from async_cast import also_async
@@ -61,7 +61,12 @@ if __name__ == '__main__':
     asyncio.run(main())
 ```
 
-## Running `async` function in threadpool
+## Running tasks in a ThreadPool
+
+I wrapped existing `ThreadPoolExecutor` to make it easier to run tasks inside it.
+Tasks are automatically registered in the pool declared by the `with thread_pool(...):` context.
+
+### Running `async` function in threadpool
 
 ```python
 from async_cast import also_blocking, thread_pool
@@ -86,7 +91,7 @@ if __name__ == '__main__':
     asyncio.run(main())
 ```
 
-## Running sync/blocking function in threadpool
+### Running blocking function in threadpool
 
 ```python
 from async_cast import also_async, thread_pool
