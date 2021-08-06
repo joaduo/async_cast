@@ -2,11 +2,21 @@
 
 [![Codeship Status for joaduo/async_cast](https://app.codeship.com/projects/30c11a6e-2132-4298-8dbb-2b01e8cf3bac/status?branch=main)](https://app.codeship.com/projects/450075)
 
-Cast async function to blocking and viceversa.
+Cast async function to blocking and viceversa. (works on python 3.7 and up)
 Also run in functions async and blocking functions in threads.
 
+## Why `async_cast`?
 
-## Casting `async` function to a sync/blocking function
+I found the current `asyncio` tools frustrating when migrating from blocking code.
+If you want to profit IO operations to *"run something else"* you need to rewrite all code to use
+asyncio. When you start form scratch that's acceptable, but not with legacy code.
+
+So with this small self-contained library you can easily convert legacy code into async code.
+The best way is running several blocking function in different threads. But **be aware** that threads
+also bring race conditions, so make sure concurrent functions are thread-safe.
+
+
+## Casting `async` function to a blocking function
 
 ```python
 from async_cast import also_blocking
@@ -22,7 +32,7 @@ if __name__ == '__main__':
     print(request_url.sync('https://github.com'))
 ```
 
-## Casting a sync/blocking function to `async` function
+## Casting a blocking function to `async` function
 
 from async_cast import also_blocking, also_async, thread_pool
 
