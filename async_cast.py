@@ -86,6 +86,10 @@ class _also_async(_DecoratorBase):
     async def async_(self, *args, **kwargs):
         return self._wrapped(*args, **kwargs)
 
+
+WRAPPER_ASSIGNMENTS = ('blocking', 'async_', 'async_thread')
+
+
 def also_async(func):
     """
     Decorator allowing casting blocking function to async function
@@ -95,9 +99,8 @@ def also_async(func):
     def wrapper(*a, **kw):
         return func(*a, **kw)
     instance = _also_async(func)
-    wrapper.blocking = instance.blocking
-    wrapper.async_ = instance.async_
-    wrapper.async_thread = instance.async_thread
+    for attr in WRAPPER_ASSIGNMENTS:
+        setattr(wrapper, attr, getattr(instance, attr))
     return wrapper
 
 
@@ -118,9 +121,8 @@ def also_blocking(func):
     def wrapper(*a, **kw):
         return func(*a, **kw)
     instance = _also_blocking(func)
-    wrapper.blocking = instance.blocking
-    wrapper.async_ = instance.async_
-    wrapper.async_thread = instance.async_thread
+    for attr in WRAPPER_ASSIGNMENTS:
+        setattr(wrapper, attr, getattr(instance, attr))
     return wrapper
 
 
