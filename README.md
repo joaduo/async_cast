@@ -25,7 +25,7 @@ pip install -U async-cast
 
 The package is a single module that you can easily audit. 
 
-## Casting `async` function to a blocking function
+## Decorator: casting `async` function to a blocking function
 
 ```python
 from async_cast import also_blocking
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     print(request_url.blocking('https://github.com'))
 ```
 
-## Casting a blocking function to `async` function
+## Decorator: casting a blocking function to `async` function
 
 ```python
 from async_cast import also_async
@@ -115,4 +115,71 @@ async def main():
 if __name__ == '__main__':
     asyncio.run(main())
 ```
+## Non decorators alternatives
+
+## Casting `async` function to a blocking function with `to_blocking`
+
+```python
+from async_cast import to_blocking
+
+async def request_url(url, **kwargs):
+    print(f'Requesting {url} with options {kwargs}')
+    ...
+    result = f'<h1>{url}</h1>'
+    return result
+
+if __name__ == '__main__':
+    print(to_blocking(request_url, 'https://github.com'))
+```
+
+## Casting a blocking function to `async` function with `to_async`
+
+```python
+from async_cast import to_async
+import asyncio
+
+def request_url(url, **kwargs):
+    print(f'Requesting {url} with options {kwargs}')
+    ...
+    result = f'<h1>{url}</h1>'
+    return result
+
+async def main():
+    print(await to_async(request_url, 'https://github.com'))
+
+if __name__ == '__main__':
+    asyncio.run(main())
+```
+
+### Running `async` or blocking function in threadpool with `to_async_thread`
+
+```python
+from async_cast import to_async_thread, thread_pool
+import asyncio
+
+async def request_url(url, **kwargs):
+    print(f''Requesting {url} with options {kwargs}')
+    ...
+    result = f'<h1>{url}</h1>'
+    return result
+
+def request_url_blocking(url, **kwargs):
+    print(f'Requesting {url} with options {kwargs}')
+    ...
+    result = f'<h1>{url}</h1>'
+    return result
+
+async def main():
+    with thread_pool(3):
+        t1 = to_async_thread(request_url, 'https://github.com')
+        t2 = to_async_thread(request_url, 'https://google.com')
+        t3 = to_async_thread(request_url, 'https://facebook.com')
+        t4 = to_async_thread(request_url_blocking, 'https://duckduckgo.com')
+        results = await asyncio.gather(t1,t2,t3,t4)
+        print(results)
+
+if __name__ == '__main__':
+    asyncio.run(main())
+```
+
 
