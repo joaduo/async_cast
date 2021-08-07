@@ -74,7 +74,7 @@ import asyncio
 
 @also_blocking
 async def request_url(url, **kwargs):
-    print(f''Requesting {url} with options {kwargs}')
+    print(f'Requesting {url} with options {kwargs}')
     ...
     result = f'<h1>{url}</h1>'
     return result
@@ -129,7 +129,7 @@ async def request_url(url, **kwargs):
     return result
 
 if __name__ == '__main__':
-    print(to_blocking(request_url, 'https://github.com'))
+    print(to_blocking(request_url)('https://github.com'))
 ```
 
 ## Casting a blocking function to `async` function with `to_async`
@@ -145,7 +145,7 @@ def request_url(url, **kwargs):
     return result
 
 async def main():
-    print(await to_async(request_url, 'https://github.com'))
+    print(await to_async(request_url)('https://github.com'))
 
 if __name__ == '__main__':
     asyncio.run(main())
@@ -158,7 +158,7 @@ from async_cast import to_async_thread, thread_pool
 import asyncio
 
 async def request_url(url, **kwargs):
-    print(f''Requesting {url} with options {kwargs}')
+    print(f'Requesting {url} with options {kwargs}')
     ...
     result = f'<h1>{url}</h1>'
     return result
@@ -171,10 +171,10 @@ def request_url_blocking(url, **kwargs):
 
 async def main():
     with thread_pool(3):
-        t1 = to_async_thread(request_url, 'https://github.com')
-        t2 = to_async_thread(request_url, 'https://google.com')
-        t3 = to_async_thread(request_url, 'https://facebook.com')
-        t4 = to_async_thread(request_url_blocking, 'https://duckduckgo.com')
+        t1 = to_async_thread(request_url)('https://github.com')
+        t2 = to_async_thread(request_url)('https://google.com')
+        t3 = to_async_thread(request_url)('https://facebook.com')
+        t4 = to_async_thread(request_url_blocking)('https://duckduckgo.com')
         results = await asyncio.gather(t1,t2,t3,t4)
         print(results)
 

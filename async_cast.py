@@ -94,7 +94,7 @@ def also_async(func):
     """
     Decorator allowing casting blocking function to async function
     """
-    assert not inspect.iscoroutinefunction(func), 'You need to decorate a blocking function'
+    assert not inspect.iscoroutinefunction(func) and callable(func), 'You need to decorate a blocking function'
     @wraps(func)
     def wrapper(*a, **kw):
         return func(*a, **kw)
@@ -126,30 +126,42 @@ def also_blocking(func):
     return wrapper
 
 
-def to_async(func, *args, **kwargs):
+def to_async(func):
     """
     Cast blocking function to async function
     :param func:
     """
-    func = also_async(func)
-    return func.async_(*args, **kwargs)
+    assert not inspect.iscoroutinefunction(func) and callable(func), 'You need to cast a blocking function'
+    casted_func = _also_async(func)
+    @wraps(func)
+    def wrapper(*a, **kw):
+        return casted_func.async_(*a, **kw)
+    return wrapper
 
 
-def to_blocking(func, *args, **kwargs):
+def to_blocking(func):
     """
     Cast async function to blocking function
     :param func:
     """
-    func = also_blocking(func)
-    return func.blocking(*args, **kwargs)
+    assert inspect.iscoroutinefunction(func), 'You need to cast a coroutine'
+    casted_func = _also_blocking(func)
+    @wraps(func)
+    def wrapper(*a, **kw):
+        return casted_func.blocking(*a, **kw)
+    return wrapper
 
 
-def to_async_thread(func, *args, **kwargs):
+def to_async_thread(func):
     """
     Cast any function (async or blocking) to async_thread
     To be used with `with thread_pool(...):`
     :param func:
     """
-    func = _DecoratorBase(func)
-    return func.async_thread(*args, **kwargs)
+    assert callable(func), 'You need to cast a function'
+    casted_func = _DecoratorBase(func)
+    @wraps(func)
+    def wrapper(*a, **kw):
+        return casted_func.async_thread(*a, **kw)
+    return wrapper
 
