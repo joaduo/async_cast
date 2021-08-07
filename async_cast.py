@@ -7,6 +7,7 @@ Code Licensed under MIT License. See LICENSE file.
 import asyncio
 import concurrent.futures
 import inspect
+from functools import wraps
 
 
 def thread_pool(max_workers=None, *args, **kwargs):
@@ -56,16 +57,16 @@ class _DecoratorBase:
                 return pool.__exit__(exc_type, exc_val, exc_tb)
         return PoolContext()
 
-    def __init__(self, wrapped_func):
-        self._wrapped_func = wrapped_func
+    def __init__(self, wrapped):
+        self._wrapped = wrapped
 
     def __call__(self, *args, **kwargs):
-        return self._wrapped_func(*args, **kwargs)
+        return self._wrapped(*args, **kwargs)
 
     def async_thread(self, *args, **kwargs):
-        fn = self._wrapped_func
+        fn = self._wrapped
         if inspect.iscoroutinefunction(fn):
-            fn = self.blocking
+            fn = self._blocking
         loop = asyncio.get_running_loop()
         # run_in_executor only allows *args (positional), so we use self._run_fn
         return loop.run_in_executor(self._get_pool(),
@@ -74,27 +75,79 @@ class _DecoratorBase:
     def _run_fn(self, fn, args, kwargs):
         return fn(*args, **kwargs)
 
+    def _blocking(self, *args, **kwargs):
+        return asyncio.run(self(*args, **kwargs))
 
-class also_async(_DecoratorBase):
-    """
-    Cast blocking function to async
-    """
+
+class _also_async(_DecoratorBase):
     def blocking(self, *args, **kwargs):
-        return self._wrapped_func(*args, **kwargs)
+        return self._wrapped(*args, **kwargs)
 
     async def async_(self, *args, **kwargs):
-        return self._wrapped_func(*args, **kwargs)
+        return self._wrapped(*args, **kwargs)
+
+def also_async(func):
+    """
+    Decorator allowing casting blocking function to async function
+    """
+    assert not inspect.iscoroutinefunction(func), 'You need to decorate a blocking function'
+    @wraps(func)
+    def wrapper(*a, **kw):
+        return func(*a, **kw)
+    instance = _also_async(func)
+    wrapper.blocking = instance.blocking
+    wrapper.async_ = instance.async_
+    wrapper.async_thread = instance.async_thread
+    return wrapper
 
 
-class also_blocking(_DecoratorBase):
-    """
-    Cast async function to blocking
-    """
+class _also_blocking(_DecoratorBase):
     def blocking(self, *args, **kwargs):
-        return asyncio.run(self(*args, **kwargs))
+        return self._blocking(*args, **kwargs)
 
     def async_(self, *args, **kwargs):
         return self(*args, **kwargs)
 
 
+def also_blocking(func):
+    """
+    Decorator allowing casting async function to blocking function
+    """
+    assert inspect.iscoroutinefunction(func), 'You need to decorate a coroutine'
+    @wraps(func)
+    def wrapper(*a, **kw):
+        return func(*a, **kw)
+    instance = _also_blocking(func)
+    wrapper.blocking = instance.blocking
+    wrapper.async_ = instance.async_
+    wrapper.async_thread = instance.async_thread
+    return wrapper
+
+
+def to_async(func, *args, **kwargs):
+    """
+    Cast blocking function to async function
+    :param func:
+    """
+    func = also_async(func)
+    return func.async_(*args, **kwargs)
+
+
+def to_blocking(func, *args, **kwargs):
+    """
+    Cast async function to blocking function
+    :param func:
+    """
+    func = also_blocking(func)
+    return func.blocking(*args, **kwargs)
+
+
+def to_async_thread(func, *args, **kwargs):
+    """
+    Cast any function (async or blocking) to async_thread
+    To be used with `with thread_pool(...):`
+    :param func:
+    """
+    func = _DecoratorBase(func)
+    return func.async_thread(*args, **kwargs)
 
