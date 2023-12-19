@@ -140,9 +140,9 @@ def async_thread(func):
     """
     assignments = ('async_thread',)
     if inspect.iscoroutinefunction(func):
-        wrapper = also_blocking(func, assignments)
+        wrapper = __also_blocking(func, assignments)
     else:
-        wrapper = also_async(func, assignments)
+        wrapper = __also_async(func, assignments)
     return wrapper
 
 
