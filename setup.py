@@ -5,13 +5,13 @@ Copyright (c) 2021, Joaquin G. Duo
 Code Licensed under MIT License. See LICENSE file.
 """
 from setuptools import setup
-import six
+import sys
 
 name = 'async_cast'
 
 def long_description():
     with open('README') as f:
-        if six.PY3:
+        if sys.version_info[0] == 3:
             return f.read()
         else:
             return unicode(f.read())
@@ -20,7 +20,7 @@ def long_description():
 setup(
   name = name,
   py_modules=[name],
-  version = '0.4.1',
+  version = '0.4.2',
   description = 'Cast an async function to blocking function and viceversa. Also use threads pools if needed.',
   long_description=long_description(),
   long_description_content_type='text/x-rst',

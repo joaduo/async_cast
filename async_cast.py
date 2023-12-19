@@ -79,6 +79,27 @@ class _DecoratorBase:
         return asyncio.run(self(*args, **kwargs))
 
 
+WRAPPER_ASSIGNMENTS = ('blocking', 'async_', 'async_thread')
+
+
+def also_async(func):
+    """
+    Decorator allowing casting blocking function to async function
+    """
+    return __also_async(func)
+
+
+def __also_async(func, assignments=WRAPPER_ASSIGNMENTS):
+    assert not inspect.iscoroutinefunction(func) and callable(func), 'You need to decorate a blocking function'
+    @wraps(func)
+    def wrapper(*a, **kw):
+        return func(*a, **kw)
+    instance = _also_async(func)
+    for attr in WRAPPER_ASSIGNMENTS:
+        setattr(wrapper, attr, getattr(instance, attr))
+    return wrapper
+
+
 class _also_async(_DecoratorBase):
     def blocking(self, *args, **kwargs):
         return self._wrapped(*args, **kwargs)
@@ -87,19 +108,20 @@ class _also_async(_DecoratorBase):
         return self._wrapped(*args, **kwargs)
 
 
-WRAPPER_ASSIGNMENTS = ('blocking', 'async_', 'async_thread')
+def also_blocking(func):
+    """
+    Decorator allowing casting async function to blocking function
+    """
+    return __also_blocking(func)
 
 
-def also_async(func):
-    """
-    Decorator allowing casting blocking function to async function
-    """
-    assert not inspect.iscoroutinefunction(func) and callable(func), 'You need to decorate a blocking function'
+def __also_blocking(func, assignments=WRAPPER_ASSIGNMENTS):
+    assert inspect.iscoroutinefunction(func), 'You need to decorate a coroutine'
     @wraps(func)
     def wrapper(*a, **kw):
         return func(*a, **kw)
-    instance = _also_async(func)
-    for attr in WRAPPER_ASSIGNMENTS:
+    instance = _also_blocking(func)
+    for attr in assignments:
         setattr(wrapper, attr, getattr(instance, attr))
     return wrapper
 
@@ -112,17 +134,15 @@ class _also_blocking(_DecoratorBase):
         return self(*args, **kwargs)
 
 
-def also_blocking(func):
+def async_thread(func):
     """
-    Decorator allowing casting async function to blocking function
+    Decorator adding the `<func>.async_thread` attribute
     """
-    assert inspect.iscoroutinefunction(func), 'You need to decorate a coroutine'
-    @wraps(func)
-    def wrapper(*a, **kw):
-        return func(*a, **kw)
-    instance = _also_blocking(func)
-    for attr in WRAPPER_ASSIGNMENTS:
-        setattr(wrapper, attr, getattr(instance, attr))
+    assignments = ('async_thread',)
+    if inspect.iscoroutinefunction(func):
+        wrapper = also_blocking(func, assignments)
+    else:
+        wrapper = also_async(func, assignments)
     return wrapper
 
 
