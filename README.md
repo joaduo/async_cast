@@ -1,6 +1,6 @@
 # async_cast
 
-[![Codeship Status for joaduo/async_cast](https://app.codeship.com/projects/30c11a6e-2132-4298-8dbb-2b01e8cf3bac/status?branch=main)](https://app.codeship.com/projects/450075)
+[![.github/workflows/tests.yml](https://github.com/joaduo/async_cast/actions/workflows/tests.yml/badge.svg)](https://github.com/joaduo/async_cast/actions/workflows/tests.yml)
 
 Cast async function to blocking and viceversa. (works on python 3.7 and up)
 Also run functions in threads, whether async or blocking.
